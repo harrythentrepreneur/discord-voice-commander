@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Voice Commander for Discord — talk to your Discord</title>
+<meta name="description" content="Catch up, post, reply and run your Discord server by voice, from your phone. Open source, self-hosted, private by default.">
+<meta name="theme-color" content="#0a0a0c">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta property="og:title" content="Voice Commander for Discord">
+<meta property="og:description" content="Talk to your Discord. Catch up, post and track work by voice, from your phone.">
+<meta property="og:image" content="og.png">
+<style>
+:root { --bg:#0a0a0c; --s:#141418; --s2:#1c1c22; --line:rgba(255,255,255,.08); --text:#f4f4f6; --muted:#a1a1aa; --accent:#5865f2; --ok:#34d399; color-scheme:dark; }
+* { box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { margin:0; background:radial-gradient(90vmax 60vmax at 50% -10%, rgba(88,101,242,.22), transparent 60%), var(--bg); color:var(--text);
+  font:17px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
+a { color:inherit; }
+.wrap { max-width:1040px; margin:0 auto; padding:0 24px; }
+nav { display:flex; align-items:center; justify-content:space-between; padding:22px 0; }
+.logo { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; text-decoration:none; }
+.logo img { width:30px; height:30px; border-radius:8px; }
+.gh { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px; border:1px solid var(--line); text-decoration:none; font-size:15px; font-weight:600; }
+.gh:hover { background:var(--s); }
+.gh svg { width:18px; height:18px; fill:currentColor; }
+
+.hero { display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center; padding:64px 0 96px; }
+.eyebrow { display:inline-block; font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#a5b4fc; margin-bottom:18px; }
+h1 { font-size:clamp(44px,6.4vw,76px); line-height:1.02; letter-spacing:-.045em; margin:0 0 22px; }
+h1 em { font-style:normal; background:linear-gradient(90deg,#8a93ff,#c4b5fd); -webkit-background-clip:text; background-clip:text; color:transparent; }
+.lede { font-size:20px; color:#c4c4cc; max-width:36ch; margin:0 0 34px; }
+.cta { display:flex; gap:12px; flex-wrap:wrap; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:15px 24px; border-radius:14px; font-weight:650; text-decoration:none; font-size:16px; }
+.btn.primary { background:var(--accent); color:#fff; box-shadow:0 10px 30px rgba(88,101,242,.35); }
+.btn.primary:hover { filter:brightness(1.08); }
+.btn.ghost { border:1px solid rgba(255,255,255,.2); }
+.btn.ghost:hover { background:var(--s); }
+.note { margin-top:18px; font-size:14.5px; color:#b4b4bd; }
+
+/* phone */
+.phone { justify-self:center; width:300px; height:560px; border-radius:48px; padding:12px; background:#1a1a1f; border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 40px 90px rgba(0,0,0,.6); }
+.screen { position:relative; height:100%; border-radius:38px; overflow:hidden; background:radial-gradient(120% 70% at 50% 120%, rgba(88,101,242,.18), transparent 60%), #0a0a0c;
+  display:flex; flex-direction:column; padding:44px 18px 22px; font-size:13.5px; }
+.bub { max-width:90%; padding:9px 13px; border-radius:16px; margin-bottom:12px; line-height:1.45; opacity:0; transform:translateY(6px); animation:in .5s forwards; }
+.bub.you { align-self:flex-end; background:var(--s2); border-bottom-right-radius:5px; }
+.bub.bot { align-self:flex-start; max-width:100%; padding:2px; text-align:left; }
+.card { align-self:stretch; background:var(--s); border:1px solid var(--line); border-left:3px solid var(--ok); border-radius:12px; padding:9px 11px; font-size:13px; margin-bottom:12px; opacity:0; animation:in .5s forwards; }
+.card b { display:block; color:var(--ok); font-size:12px; margin-bottom:2px; }
+.b1 { animation-delay:.4s } .b2 { animation-delay:1.4s } .b3 { animation-delay:2.6s } .b4 { animation-delay:3.6s } .b5 { animation-delay:4.8s }
+.micbar { margin-top:auto; display:flex; flex-direction:column; align-items:center; gap:10px; }
+.mic { position:relative; width:66px; height:66px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#ff7a8a,#f43f5e 55%,#c81e45); display:grid; place-items:center; box-shadow:0 10px 28px rgba(244,63,94,.4); }
+.mic::before, .mic::after { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid #f43f5e; animation:pulse 2.4s ease-out infinite; }
+.mic::after { animation-delay:1.2s; }
+.mic i { width:18px; height:18px; border-radius:4px; background:#fff; }
+.listen { font-size:12.5px; color:#c4c4cc; }
+
+section { padding:88px 0; border-top:1px solid var(--line); }
+h2 { font-size:clamp(30px,4vw,44px); letter-spacing:-.035em; line-height:1.1; margin:0 0 14px; }
+.sub { color:var(--muted); font-size:19px; margin:0 0 44px; max-width:52ch; }
+.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.f { background:var(--s); border:1px solid var(--line); border-radius:20px; padding:24px; }
+.f .say { font-size:15px; color:#a5b4fc; font-weight:600; margin-bottom:12px; }
+.f h3 { margin:0 0 6px; font-size:19px; letter-spacing:-.01em; }
+.f p { margin:0; color:var(--muted); font-size:15.5px; }
+
+.steps { counter-reset:s; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+.step { counter-increment:s; padding:24px; border-radius:20px; border:1px solid var(--line); }
+.step::before { content:counter(s); display:grid; place-items:center; width:32px; height:32px; border-radius:10px; background:var(--accent); font-weight:800; margin-bottom:14px; }
+.step h3 { margin:0 0 6px; font-size:18px; }
+.step p { margin:0; color:var(--muted); font-size:15.5px; }
+pre { margin:44px 0 0; white-space:pre; background:var(--s); border:1px solid var(--line); border-radius:16px; padding:20px 22px; overflow-x:auto; font:14.5px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; color:#d4d4d8; }
+pre .c { color:#9a9aa5; }
+
+.safe { display:grid; grid-template-columns:repeat(3,1fr); gap:28px 16px; }
+.safe div { display:flex; gap:14px; align-items:flex-start; } .safe p { margin:0; }
+.safe svg { flex:none; width:22px; height:22px; margin-top:1px; stroke:var(--ok); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
+.safe b { display:block; font-size:17px; }
+.safe span { color:var(--muted); font-size:15.5px; }
+
+footer { padding:48px 0 64px; border-top:1px solid var(--line); color:var(--muted); font-size:14px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+
+@keyframes in { to { opacity:1; transform:none; } }
+@keyframes pulse { 0% { transform:scale(1); opacity:.5 } 100% { transform:scale(1.5); opacity:0 } }
+@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; opacity:1 !important; transform:none !important; } }
+@media (max-width:860px) {
+  .hero { grid-template-columns:1fr; gap:56px; padding:32px 0 72px; text-align:center; }
+  .lede { margin-left:auto; margin-right:auto; } .cta { justify-content:center; } .cta .btn { flex:1 1 0; justify-content:center; max-width:220px; }
+  .phone { text-align:left; }
+  .grid, .steps, .safe { grid-template-columns:1fr; }
+  pre { font-size:12.5px; padding:16px; }
+  h1 { font-size:46px; }
+  section { padding:64px 0; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <a class="logo" href="#"><img src="icon.svg" alt="">Voice Commander</a>
+    <a class="gh" href="https://github.com/harrythentrepreneur/discord-voice-commander"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
+  </nav>
+
+  <header class="hero">
+    <div>
+      <span class="eyebrow">Open source · self-hosted</span>
+      <h1>Talk to your <em>Discord.</em></h1>
+      <p class="lede">Catch up, post, reply and keep track of your server by voice — hands&#8209;free, from your phone.</p>
+      <div class="cta">
+        <a class="btn primary" href="https://github.com/harrythentrepreneur/discord-voice-commander#quick-start">Set it up</a>
+        <a class="btn ghost" href="#how">How it works</a>
+      </div>
+      <p class="note">Runs on your own computer. Uses your ChatGPT account for the voice.</p>
+    </div>
+
+    <div class="phone" aria-label="Example conversation">
+      <div class="screen">
+        <div class="bub you b1">What did I miss in #design?</div>
+        <div class="bub bot b2">Two things. Maya posted the new logo for review, and Leo asked whether the launch moves to Friday. Nobody has answered him yet.</div>
+        <div class="bub you b3">Tell Leo yes, Friday.</div>
+        <div class="bub bot b4">✓ Posted in #design.</div>
+        <div class="card b5"><b>✓ Leo replied · #design</b>Great, I'll update the plan.</div>
+        <div class="micbar"><div class="mic"><i></i></div><span class="listen">Listening…</span></div>
+      </div>
+    </div>
+  </header>
+</div>
+
+<section>
+  <div class="wrap">
+    <h2>Everything you'd do in Discord. Out loud.</h2>
+    <p class="sub">Say it the way you'd say it to a person. It finds the right channel, even if you only half remember the name.</p>
+    <div class="grid">
+      <div class="f"><div class="say">“What did I miss?”</div><h3>Catch up</h3><p>A short spoken summary of what's new, with the real messages, images and videos on screen.</p></div>
+      <div class="f"><div class="say">“Tell the team we ship Friday.”</div><h3>Post and reply</h3><p>Posts go out under your name and look like you wrote them. Reply, react, pin, start threads.</p></div>
+      <div class="f"><div class="say">“Did everything go through?”</div><h3>Track what you asked</h3><p>Every request has a live status: working, replied, done, or waiting on you.</p></div>
+      <div class="f"><div class="say">“Undo.”</div><h3>Take it back</h3><p>One word undoes the last thing it did: a post, a thread, a reaction, a rename.</p></div>
+      <div class="f"><div class="say">“Tell me when Leo replies.”</div><h3>Hear when it's done</h3><p>Get told when someone replies to you. With your phone locked, Discord pings you instead.</p></div>
+      <div class="f"><div class="say">“Um… hang on.”</div><h3>Ignores small talk</h3><p>Filler and background chatter are skipped, so the people around you won't post by accident.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2>Set up in about ten minutes.</h2>
+    <p class="sub">It runs on a computer you own and your phone connects to it privately. Nothing is hosted for you, and nothing is shared.</p>
+    <div class="steps">
+      <div class="step"><h3>Add a Discord bot</h3><p>Create a bot in the Discord developer portal and invite it to your server.</p></div>
+      <div class="step"><h3>Run the server</h3><p>Clone the repo, add your bot token and server ID, and sign in to ChatGPT once with the Codex CLI.</p></div>
+      <div class="step"><h3>Open it on your phone</h3><p>Use Tailscale to reach your computer privately. Add the page to your home screen, then tap and talk.</p></div>
+    </div>
+<pre><span class="c"># needs Node 20+</span>
+REPO=harrythentrepreneur/discord-voice-commander
+npx degit $REPO dvc
+cd dvc && npm install
+
+<span class="c"># add your bot token + server ID</span>
+cp .env.example .env
+
+<span class="c"># sign in to ChatGPT (for the voice)</span>
+codex login
+
+npm start
+
+<span class="c"># in a second terminal: phone access</span>
+tailscale serve 3077</pre>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <h2>Safe by default.</h2>
+    <p class="sub">It acts with your server's permissions, so the guard rails are built in.</p>
+    <div class="safe">
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Private, not public</b><span>Listens only on your computer. Reach it through your private Tailscale network, never the open internet.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>No destructive actions</b><span>It can't delete other people's messages, ban members or change permissions. The only delete is undoing its own last action.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Only posts when you ask</b><span>A post goes out only if you clearly asked for one. Anything else waits for a spoken yes.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Your keys stay home</b><span>Tokens stay on your computer and never reach the browser. It uses your own ChatGPT sign-in and needs no extra API key.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>No double posts</b><span>The same message to the same channel within a minute is sent once.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Open source, MIT</b><span>Small and readable. Check every line yourself.</span></p></div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap">
+  <footer>
+    <span>Voice Commander for Discord · MIT licence</span>
+    <span>Not affiliated with or endorsed by Discord or OpenAI.</span>
+  </footer>
+</div>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "discord-voice-commander",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node src/server.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "security": "node scripts/security-check.mjs"
+  },
+  "description": "Talk to your Discord. Catch up, post and track work by voice, from your phone.",
+  "license": "MIT",
+  "devDependencies": {
+    "playwright": "^1.50.0"
+  },
+  "homepage": "https://harrythentrepreneur.github.io/discord-voice-commander/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/harrythentrepreneur/discord-voice-commander.git"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "keywords": [
+    "discord",
+    "voice",
+    "voice-control",
+    "assistant",
+    "chatgpt",
+    "self-hosted"
+  ]
+}

@@ -1,9 +1,13 @@
 <!doctype html><meta charset="utf-8"><style>
-body{margin:0;width:1200px;height:630px;overflow:hidden;font-family:-apple-system,Inter,system-ui,sans-serif;color:#f4f4f6;
-background:radial-gradient(700px 500px at 85% 50%,rgba(88,101,242,.35),transparent 70%),#111116;display:flex;align-items:center;padding:0 90px;box-sizing:border-box}
-.l{flex:1}img{width:84px;height:84px;border-radius:22px;margin-bottom:34px}
-h1{font-size:92px;line-height:1;letter-spacing:-.045em;margin:0 0 22px}em{font-style:normal;background:linear-gradient(90deg,#8a93ff,#c4b5fd);-webkit-background-clip:text;color:transparent}
-p{font-size:30px;color:#c4c4cc;margin:0}.mic{width:260px;height:260px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#8a93ff,#5865f2 55%,#3a42c4);box-shadow:0 0 0 30px rgba(88,101,242,.12),0 0 0 60px rgba(88,101,242,.06),0 30px 80px rgba(88,101,242,.5)}
-.mic svg{width:110px;height:110px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round}</style>
-<div class="l"><img src="icon.svg"><h1>Talk to your<br><em>Discord.</em></h1><p>Voice Commander · open source</p></div>
-<div class="mic"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></div>
+@font-face{font-family:'Instrument Serif';src:url(fonts/InstrumentSerif-400.woff2)}
+@font-face{font-family:'Instrument Sans';font-weight:400 600;src:url(fonts/InstrumentSans.woff2)}
+body{margin:0;width:1200px;height:630px;overflow:hidden;background:#f4efec;color:#1f2322;font-family:'Instrument Sans',sans-serif;display:flex;align-items:center;justify-content:space-between;padding:0 96px;box-sizing:border-box}
+.e{display:flex;align-items:center;gap:10px;font-size:20px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:#5865f2}.e:before{content:"";width:26px;height:3px;background:currentColor;border-radius:2px}
+h1{font:400 118px/.94 'Instrument Serif',serif;letter-spacing:-.025em;margin:22px 0 0}
+.br{position:relative;z-index:0}.br:after{content:"";position:absolute;left:0;right:4%;bottom:-.08em;height:.22em;z-index:-1;rotate:-1.5deg;background:no-repeat center/100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 40' preserveAspectRatio='none'%3E%3Cpath d='M4 26 C 70 14, 150 10, 230 13 S 360 20, 396 12' stroke='%235865f2' stroke-opacity='.55' stroke-width='14' stroke-linecap='round' fill='none'/%3E%3C/svg%3E")}
+.c{width:380px;background:#fdfcfb;border-radius:36px;padding:28px 22px;box-shadow:0 40px 80px -48px rgba(31,35,34,.55);display:flex;flex-direction:column;gap:8px;font-size:25px;line-height:1.25}
+.m{align-self:flex-end;background:#1f2322;color:#fdfcfb;padding:12px 18px;border-radius:24px 24px 7px 24px}
+.k{align-self:flex-start;background:#f4efec;padding:12px 18px;border-radius:24px 24px 24px 7px}
+</style>
+<div><div class="e">Voice Commander</div><h1>Talk to<br>your <span class="br">Discord.</span></h1></div>
+<div class="c"><div class="m">🎙&nbsp; What did I miss?</div><div class="k">Leo asked: launch on Friday?</div><div class="m">🎙&nbsp; Tell him yes.</div><div class="k">Posted in #design. ✓</div></div>

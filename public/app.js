@@ -651,9 +651,12 @@ async function refreshRequests(render = true) {
     const ol = $("#req-list");
     ol.innerHTML = "";
     if (!r.items.length) ol.append(el("li", "muted", "Nothing sent from the voice app in the last 48 hours."));
-    for (const x of r.items) {
+    // What needs you first, then work in progress, then the rest (newest first within each).
+    const rank = { "needs you": 0, working: 1, "no reply yet": 2, replied: 3, done: 4 };
+    const items = [...r.items].sort((a, b) => (rank[a.status] ?? 5) - (rank[b.status] ?? 5) || String(b.at).localeCompare(String(a.at)));
+    for (const x of items) {
       const li = el("li");
-      const a = el("a", "req");
+      const a = el("a", "req" + (x.status === "needs you" ? " needs" : ""));
       a.href = x.url; a.target = "_blank"; a.rel = "noopener";
       const top = el("div", "req-top");
       top.append(el("span", "req-room", shortRoom(x.room) || "Discord"));

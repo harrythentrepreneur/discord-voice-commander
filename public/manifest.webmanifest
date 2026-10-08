@@ -4,10 +4,18 @@
   "description": "Talk to your Discord.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0a0a0c",
-  "theme_color": "#0a0a0c",
+  "background_color": "#f4efec",
+  "theme_color": "#f4efec",
   "icons": [
-    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" },
-    { "src": "/icon.png", "sizes": "512x512", "type": "image/png" }
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
   ]
 }

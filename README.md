@@ -109,4 +109,4 @@ URL=http://127.0.0.1:3077 node scripts/voice-e2e.mjs question.wav   # a real voi
 
 ## License
 
-MIT. Not affiliated with or endorsed by Discord or OpenAI. Discord is a trademark of Discord Inc.
+MIT. Fonts: Instrument Sans and Instrument Serif, SIL Open Font License (see `public/fonts/`). Not affiliated with or endorsed by Discord or OpenAI. Discord is a trademark of Discord Inc.

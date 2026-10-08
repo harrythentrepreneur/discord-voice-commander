@@ -3,13 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0a0a0c">
+<meta name="theme-color" content="#f4efec">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Commander">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon.png">
+<link rel="preload" href="/fonts/InstrumentSerif-400.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/fonts/fonts.css">
 <link rel="stylesheet" href="/app.css">
 <title>Voice Commander</title>
 </head>
@@ -17,9 +19,9 @@
 
 <!-- Sign in -->
 <main id="login" class="login" hidden>
-  <img class="logo-big" src="/icon.svg" alt="">
+  <div class="mark-big" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 10v4M10 7v10M14 9v6M18 11v2"/></svg></div>
   <h1>Voice Commander</h1>
-  <p class="muted">Enter the access code printed when the server started<br>(also in <code>.local/access-code</code>).</p>
+  <p class="soft">Enter the access code shown when the server started. It's also saved in <code>.local/access-code</code>.</p>
   <form id="login-form">
     <input id="code" type="password" placeholder="Access code" autocomplete="current-password" aria-label="Access code">
     <button type="submit" class="btn">Continue</button>
@@ -29,19 +31,24 @@
 
 <div id="app" class="app" hidden>
   <header class="top">
-    <div class="conn" id="conn"><i></i><span>Ready</span></div>
-    <button type="button" class="icon" id="open-requests" aria-label="Your requests">
-      <svg viewBox="0 0 24 24"><path d="M5 7h14M5 12h14M5 17h9"/></svg>
-      <b id="req-count" hidden></b>
+    <div class="brand">
+      <span class="mark" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 10v4M10 7v10M14 9v6M18 11v2"/></svg></span>
+      <span class="brand-name">Commander</span>
+      <span class="conn" id="conn"><i></i><span>Ready</span></span>
+    </div>
+    <button type="button" class="pill-btn" id="open-requests" aria-label="Your requests">
+      Requests<b id="req-count" hidden></b>
     </button>
   </header>
 
   <section class="feed" id="feed">
     <div class="empty" id="empty">
-      <h1 class="idle-only">Talk to your Discord.</h1>
-      <h1 class="call-only">Listening…</h1>
-      <p class="muted idle-only">Ask what's new, or tell it what to post.</p>
-      <p class="muted call-only">Say “undo” to take back the last thing.</p>
+      <span class="eyebrow idle-only">Voice Commander for Discord</span>
+      <span class="eyebrow call-only live-eyebrow">Live</span>
+      <h1 class="idle-only">Talk to your <span class="brush">Discord.</span></h1>
+      <h1 class="call-only">Go ahead, <span class="brush">I'm listening.</span></h1>
+      <p class="soft idle-only">Ask what's new, or tell it what to post. Say “undo” to take anything back.</p>
+      <p class="soft call-only">Say “undo” to take back the last thing.</p>
       <div class="chips stack" role="list">
         <button type="button" class="chip" data-say="What did I miss?">What did I miss?</button>
         <button type="button" class="chip" data-say="What's waiting on me?">What's waiting on me?</button>
@@ -49,20 +56,19 @@
       </div>
     </div>
     <div class="health" id="health" hidden role="alert">
-      <h1>Sign in again</h1>
-      <p class="muted" id="health-text">Voice uses your ChatGPT account, and its sign-in expired. On the computer running this app, open a terminal and run:</p>
+            <h1>Sign in again</h1>
+      <p class="soft" id="health-text">Voice uses your ChatGPT account, and its sign-in expired. On the computer running this app, open a terminal and run:</p>
       <div class="cmd"><code>codex login</code><button type="button" class="copy-cmd" id="copy-cmd">Copy</button></div>
       <button type="button" class="btn" id="health-retry">Check now</button>
-      <p class="muted small-note">This page notices on its own within 20 seconds.</p>
+      <p class="soft small-note">This page updates by itself within 20 seconds.</p>
     </div>
     <ol id="log" aria-live="polite"></ol>
   </section>
 
   <footer class="dock">
-
     <div class="chips row" id="quick" role="list" hidden>
       <button type="button" class="chip" data-say="Tell me more">Tell me more</button>
-      <button type="button" class="chip" data-say="What did I miss?">What did I miss?</button>
+      <button type="button" class="chip" data-say="What's waiting on me?">What's waiting on me?</button>
       <button type="button" class="chip" data-say="Did everything I asked for go through?">My requests</button>
     </div>
 
@@ -95,7 +101,7 @@
     </div>
 
     <form class="typed" id="typed" autocomplete="off">
-      <input id="say" placeholder="Or type…" aria-label="Type a request" enterkeyhint="send">
+      <input id="say" placeholder="Or type a message…" aria-label="Type a request" enterkeyhint="send">
       <button type="submit" class="send" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
     </form>
   </footer>
@@ -108,8 +114,8 @@
         <h2 id="req-title">Your requests</h2>
         <button type="button" class="icon" id="close-requests" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
       </div>
-      <p class="muted sheet-sub">Everything you asked for in the last 48 hours, with live status.</p>
-      <ol class="req-list" id="req-list"><li class="muted">Loading…</li></ol>
+      <p class="soft sheet-sub">Everything you asked for in the last 48 hours, with live status.</p>
+      <ol class="req-list" id="req-list"><li class="soft">Loading…</li></ol>
       <div class="settings">
         <span>Brain</span>
         <div class="seg" role="radiogroup" aria-label="Brain">
@@ -127,7 +133,7 @@
       <h2>Send this?</h2>
       <div id="confirm-text" class="sheet-text"></div>
       <div class="sheet-actions">
-        <button type="button" class="btn ghost" id="no">Cancel</button>
+        <button type="button" class="btn light" id="no">Cancel</button>
         <button type="button" class="btn" id="yes">Send</button>
       </div>
     </div>
@@ -135,7 +141,7 @@
 
   <div class="resume" id="resume" hidden>
     <span id="resume-text">Call dropped.</span>
-    <button type="button" class="btn small" id="resume-btn">Resume</button>
+    <button type="button" class="btn sm" id="resume-btn">Resume</button>
   </div>
 
   <div class="toast" id="toast" role="status" hidden></div>

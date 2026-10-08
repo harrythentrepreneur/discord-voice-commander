@@ -5,155 +5,191 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Voice Commander for Discord — talk to your Discord</title>
 <meta name="description" content="Catch up, post, reply and run your Discord server by voice, from your phone. Open source, self-hosted, private by default.">
-<meta name="theme-color" content="#0a0a0c">
+<meta name="theme-color" content="#f4efec">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <meta property="og:title" content="Voice Commander for Discord">
 <meta property="og:description" content="Talk to your Discord. Catch up, post and track work by voice, from your phone.">
 <meta property="og:image" content="og.png">
+<link rel="preload" href="fonts/InstrumentSerif-400.woff2" as="font" type="font/woff2" crossorigin>
 <style>
-:root { --bg:#0a0a0c; --s:#141418; --s2:#1c1c22; --line:rgba(255,255,255,.08); --text:#f4f4f6; --muted:#a1a1aa; --accent:#5865f2; --ok:#34d399; color-scheme:dark; }
-* { box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body { margin:0; background:radial-gradient(90vmax 60vmax at 50% -10%, rgba(88,101,242,.22), transparent 60%), var(--bg); color:var(--text);
-  font:17px/1.6 -apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,"Segoe UI",system-ui,sans-serif; -webkit-font-smoothing:antialiased; }
-a { color:inherit; }
-.wrap { max-width:1040px; margin:0 auto; padding:0 24px; }
-nav { display:flex; align-items:center; justify-content:space-between; padding:22px 0; }
-.logo { display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:-.01em; text-decoration:none; }
-.logo img { width:30px; height:30px; border-radius:8px; }
-.gh { display:inline-flex; align-items:center; gap:8px; padding:9px 16px; border-radius:999px; border:1px solid var(--line); text-decoration:none; font-size:15px; font-weight:600; }
-.gh:hover { background:var(--s); }
-.gh svg { width:18px; height:18px; fill:currentColor; }
+@font-face{font-family:'Instrument Sans';font-weight:400 600;font-display:swap;src:url(fonts/InstrumentSans.woff2) format('woff2')}
+@font-face{font-family:'Instrument Serif';font-weight:400;font-display:swap;src:url(fonts/InstrumentSerif-400.woff2) format('woff2')}
+:root{--sand:#f4efec;--sand-2:#ebe4de;--ivory:#fdfcfb;--ink:#1f2322;--body:#3a3e3c;--soft:#5d5853;--muted:#736d68;--line:#ddd3ca;--accent:#5865f2;
+  --serif:"Instrument Serif",ui-serif,Georgia,serif;--sans:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;--pad:22px}
+@media (min-width:64rem){:root{--pad:40px}}
+*{box-sizing:border-box;margin:0;padding:0}
+html{background:var(--sand);scroll-behavior:smooth}
+body{font:18px/1.5 var(--sans);color:var(--ink);letter-spacing:-.01em;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--ink);color:var(--ivory)}
+.wrap{max-width:1140px;margin:0 auto;padding:0 var(--pad)}
+.serif{font-family:var(--serif);font-weight:400}
 
-.hero { display:grid; grid-template-columns:1.1fr .9fr; gap:56px; align-items:center; padding:64px 0 96px; }
-.eyebrow { display:inline-block; font-size:13px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#a5b4fc; margin-bottom:18px; }
-h1 { font-size:clamp(44px,6.4vw,76px); line-height:1.02; letter-spacing:-.045em; margin:0 0 22px; }
-h1 em { font-style:normal; background:linear-gradient(90deg,#8a93ff,#c4b5fd); -webkit-background-clip:text; background-clip:text; color:transparent; }
-.lede { font-size:20px; color:#c4c4cc; max-width:36ch; margin:0 0 34px; }
-.cta { display:flex; gap:12px; flex-wrap:wrap; }
-.btn { display:inline-flex; align-items:center; gap:8px; padding:15px 24px; border-radius:14px; font-weight:650; text-decoration:none; font-size:16px; }
-.btn.primary { background:var(--accent); color:#fff; box-shadow:0 10px 30px rgba(88,101,242,.35); }
-.btn.primary:hover { filter:brightness(1.08); }
-.btn.ghost { border:1px solid rgba(255,255,255,.2); }
-.btn.ghost:hover { background:var(--s); }
-.note { margin-top:18px; font-size:14.5px; color:#b4b4bd; }
+.nav{position:sticky;top:0;z-index:30;background:rgba(244,239,236,.88);-webkit-backdrop-filter:saturate(1.4) blur(10px);backdrop-filter:saturate(1.4) blur(10px)}
+.nav .wrap{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;height:68px}.nav .btn{justify-self:end}
+.logo{display:flex;align-items:center;gap:10px;font-weight:600;font-size:18px;letter-spacing:-.02em}
+.logo img{width:30px;height:30px;border-radius:9px}
+.nav-links{display:none;gap:28px;font-size:15px;color:var(--soft)}
+.nav-links a:hover{color:var(--ink)}
+@media (min-width:56rem){.nav-links{display:flex}}
+@media (max-width:55.99rem){.nav .wrap{display:flex;justify-content:space-between}}
 
-/* phone */
-.phone { justify-self:center; width:300px; height:560px; border-radius:48px; padding:12px; background:#1a1a1f; border:1px solid rgba(255,255,255,.12);
-  box-shadow:0 40px 90px rgba(0,0,0,.6); }
-.screen { position:relative; height:100%; border-radius:38px; overflow:hidden; background:radial-gradient(120% 70% at 50% 120%, rgba(88,101,242,.18), transparent 60%), #0a0a0c;
-  display:flex; flex-direction:column; padding:44px 18px 22px; font-size:13.5px; }
-.bub { max-width:90%; padding:9px 13px; border-radius:16px; margin-bottom:12px; line-height:1.45; opacity:0; transform:translateY(6px); animation:in .5s forwards; }
-.bub.you { align-self:flex-end; background:var(--s2); border-bottom-right-radius:5px; }
-.bub.bot { align-self:flex-start; max-width:100%; padding:2px; text-align:left; }
-.card { align-self:stretch; background:var(--s); border:1px solid var(--line); border-left:3px solid var(--ok); border-radius:12px; padding:9px 11px; font-size:13px; margin-bottom:12px; opacity:0; animation:in .5s forwards; }
-.card b { display:block; color:var(--ok); font-size:12px; margin-bottom:2px; }
-.b1 { animation-delay:.4s } .b2 { animation-delay:1.4s } .b3 { animation-delay:2.6s } .b4 { animation-delay:3.6s } .b5 { animation-delay:4.8s }
-.micbar { margin-top:auto; display:flex; flex-direction:column; align-items:center; gap:10px; }
-.mic { position:relative; width:66px; height:66px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#ff7a8a,#f43f5e 55%,#c81e45); display:grid; place-items:center; box-shadow:0 10px 28px rgba(244,63,94,.4); }
-.mic::before, .mic::after { content:""; position:absolute; inset:0; border-radius:50%; border:2px solid #f43f5e; animation:pulse 2.4s ease-out infinite; }
-.mic::after { animation-delay:1.2s; }
-.mic i { width:18px; height:18px; border-radius:4px; background:#fff; }
-.listen { font-size:12.5px; color:#c4c4cc; }
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:58px;padding:0 28px;border-radius:999px;background:var(--ink);color:var(--ivory);
+  font-weight:600;font-size:17px;white-space:nowrap;box-shadow:0 1px 0 rgba(31,35,34,.06),0 10px 24px -14px rgba(31,35,34,.55);transition:transform .15s,background .15s}
+.btn:hover{background:#000;transform:translateY(-1px)}
+.btn svg{width:19px;height:19px;fill:currentColor}
+.btn .arrow{transition:transform .15s}.btn:hover .arrow{transform:translateX(3px)}
+.btn.sm{height:42px;padding:0 18px;font-size:15px;box-shadow:none}
+.btn.light{background:var(--ivory);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.btn.light:hover{background:#fff}
+.reassure{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:20px;font-size:14.5px;color:var(--soft);letter-spacing:0}
+.reassure span{display:inline-flex;align-items:center;gap:6px}
+.reassure span::before{content:"";width:14px;height:14px;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3 3 7-7' fill='none' stroke='%235865f2' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
 
-section { padding:88px 0; border-top:1px solid var(--line); }
-h2 { font-size:clamp(30px,4vw,44px); letter-spacing:-.035em; line-height:1.1; margin:0 0 14px; }
-.sub { color:var(--muted); font-size:19px; margin:0 0 44px; max-width:52ch; }
-.grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-.f { background:var(--s); border:1px solid var(--line); border-radius:20px; padding:24px; }
-.f .say { font-size:15px; color:#a5b4fc; font-weight:600; margin-bottom:12px; }
-.f h3 { margin:0 0 6px; font-size:19px; letter-spacing:-.01em; }
-.f p { margin:0; color:var(--muted); font-size:15.5px; }
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.eyebrow::before{content:"";width:18px;height:2px;background:currentColor;border-radius:2px}
+.brush{position:relative;white-space:nowrap;z-index:0}
+.brush::after{content:"";position:absolute;left:0;right:4%;bottom:-.1em;height:.24em;z-index:-1;rotate:-1.5deg;
+  background:no-repeat center/100% 100% url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 40' preserveAspectRatio='none'%3E%3Cpath d='M4 26 C 70 14, 150 10, 230 13 S 360 20, 396 12' stroke='%235865f2' stroke-opacity='.55' stroke-width='14' stroke-linecap='round' fill='none'/%3E%3C/svg%3E")}
 
-.steps { counter-reset:s; display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
-.step { counter-increment:s; padding:24px; border-radius:20px; border:1px solid var(--line); }
-.step::before { content:counter(s); display:grid; place-items:center; width:32px; height:32px; border-radius:10px; background:var(--accent); font-weight:800; margin-bottom:14px; }
-.step h3 { margin:0 0 6px; font-size:18px; }
-.step p { margin:0; color:var(--muted); font-size:15.5px; }
-pre { margin:44px 0 0; white-space:pre; background:var(--s); border:1px solid var(--line); border-radius:16px; padding:20px 22px; overflow-x:auto; font:14.5px/1.7 ui-monospace,SFMono-Regular,Menlo,monospace; color:#d4d4d8; }
-pre .c { color:#9a9aa5; }
+.hero{padding:40px 0 80px}
+@media (min-width:64rem){.hero{padding:64px 0 112px}}
+.hero .wrap{display:grid;gap:48px;align-items:center}
+@media (min-width:64rem){.hero .wrap{grid-template-columns:minmax(0,1.12fr) minmax(0,.88fr);gap:64px}}
+h1{font:400 clamp(50px,7.6vw,88px)/1.06 var(--serif);letter-spacing:-.025em;margin:18px 0 28px;text-wrap:balance}
+.lede{font-size:clamp(18px,1.6vw,21px);color:var(--body);max-width:34rem;margin-bottom:32px}
+.lede b{color:var(--ink);font-weight:600}
 
-.safe { display:grid; grid-template-columns:repeat(3,1fr); gap:28px 16px; }
-.safe div { display:flex; gap:14px; align-items:flex-start; } .safe p { margin:0; }
-.safe svg { flex:none; width:22px; height:22px; margin-top:1px; stroke:var(--ok); fill:none; stroke-width:2.2; stroke-linecap:round; stroke-linejoin:round; }
-.safe b { display:block; font-size:17px; }
-.safe span { color:var(--muted); font-size:15.5px; }
+/* the conversation */
+.convo{width:100%;max-width:400px;margin:0 0 0 auto;background:var(--ivory);border-radius:36px;padding:18px 14px 16px;box-shadow:0 1px 0 rgba(31,35,34,.04),0 40px 80px -48px rgba(31,35,34,.55)}
+.convo-head{display:flex;flex-direction:column;align-items:center;gap:5px;padding-bottom:12px;border-bottom:1px solid var(--sand-2)}
+.convo-head img{width:42px;height:42px;border-radius:50%}
+.convo-head b{font-size:13px;font-weight:600}
+.convo-head small{font-size:12px;color:var(--soft)}
+.stage{display:flex;flex-direction:column;gap:4px;padding:18px 2px 0;font-size:15px;line-height:1.35;min-height:0;justify-content:flex-end}
+.when{align-self:center;font-size:12px;color:var(--soft);margin:0 0 10px}
+.b{max-width:84%;padding:9px 14px;border-radius:19px;opacity:0;animation:pop .45s cubic-bezier(.2,.8,.2,1) forwards}
+.me{align-self:flex-end;background:var(--ink);color:var(--ivory);border-bottom-right-radius:6px;transform-origin:bottom right}
+.bk{align-self:flex-start;background:var(--sand);border-bottom-left-radius:6px;transform-origin:bottom left}
+.me+.bk,.bk+.me,.card+.me,.me+.card{margin-top:8px}
+.card{align-self:stretch;margin-top:8px;padding:11px 14px;border-radius:18px;background:var(--ivory);box-shadow:0 0 0 1px var(--sand-2);font-size:14px;opacity:0;animation:pop .45s cubic-bezier(.2,.8,.2,1) forwards}
+.card b{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:var(--soft);margin-bottom:3px}
+.card b::before{content:"";width:8px;height:8px;border-radius:50%;background:#3f8f5e}
+.voice{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:16px;padding-top:14px;border-top:1px solid var(--sand-2);font-size:13px;color:var(--soft)}
+.voice i{position:relative;width:38px;height:38px;border-radius:50%;background:#d9534f;display:grid;place-items:center}
+.voice i::before{content:"";width:12px;height:12px;border-radius:3px;background:#fff}
+.voice i::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid #d9534f;animation:pulse 2.4s ease-out infinite}
+.d1{animation-delay:.3s}.d2{animation-delay:1.3s}.d3{animation-delay:2.5s}.d4{animation-delay:3.4s}.d5{animation-delay:4.6s}
 
-footer { padding:48px 0 64px; border-top:1px solid var(--line); color:var(--muted); font-size:14px; display:flex; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.sec{padding:84px 0;border-top:1px solid var(--line)}
+@media (min-width:64rem){.sec{padding:112px 0}}
+.sec-head{max-width:40rem;margin-bottom:48px}
+h2{font:400 clamp(38px,5vw,60px)/1.06 var(--serif);letter-spacing:-.022em;margin-top:14px;text-wrap:balance}
+.sec-head p{margin-top:16px;font-size:19px;color:var(--body);text-wrap:pretty}
+.grid{display:grid;gap:16px}
+@media (min-width:52rem){.grid{grid-template-columns:repeat(3,1fr);gap:20px}}
+.f{background:var(--ivory);border-radius:24px;padding:26px 24px 28px;display:flex;flex-direction:column;gap:10px}
+.f .say{align-self:flex-start;background:var(--ink);color:var(--ivory);padding:7px 13px;border-radius:16px 16px 5px 16px;font-size:14.5px}
+.f h3{font:400 28px/1.05 var(--serif);letter-spacing:-.015em;margin-top:8px}
+.f p{color:var(--soft);font-size:16px;text-wrap:pretty}
 
-@keyframes in { to { opacity:1; transform:none; } }
-@keyframes pulse { 0% { transform:scale(1); opacity:.5 } 100% { transform:scale(1.5); opacity:0 } }
-@media (prefers-reduced-motion:reduce) { *,*::before,*::after { animation:none !important; opacity:1 !important; transform:none !important; } }
-@media (max-width:860px) {
-  .hero { grid-template-columns:1fr; gap:56px; padding:32px 0 72px; text-align:center; }
-  .lede { margin-left:auto; margin-right:auto; } .cta { justify-content:center; } .cta .btn { flex:1 1 0; justify-content:center; max-width:220px; }
-  .phone { text-align:left; }
-  .grid, .steps, .safe { grid-template-columns:1fr; }
-  pre { font-size:12.5px; padding:16px; }
-  h1 { font-size:46px; }
-  section { padding:64px 0; }
-}
+.steps{display:grid;gap:16px;counter-reset:s}
+@media (min-width:52rem){.steps{grid-template-columns:repeat(3,1fr);gap:20px}}
+.step{counter-increment:s;background:var(--ivory);border-radius:24px;padding:26px 24px 28px}
+.step::before{content:counter(s);font:400 44px/1 var(--serif);color:var(--accent);display:block;margin-bottom:10px}
+.step h3{font-size:18px;font-weight:600;margin-bottom:6px}
+.step p{color:var(--soft);font-size:16px}
+pre{margin-top:20px;background:var(--ink);color:#e9e4df;border-radius:24px;padding:24px 26px;overflow-x:auto;font:14px/1.75 ui-monospace,SFMono-Regular,Menlo,monospace}
+pre .c{color:#9a938d}
+
+.safe{display:grid;gap:28px 40px}
+@media (min-width:52rem){.safe{grid-template-columns:repeat(3,1fr)}}
+.safe div{display:flex;gap:14px;align-items:flex-start}
+.safe svg{flex:none;width:20px;height:20px;margin-top:3px;stroke:var(--accent);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.safe p{margin:0}
+.safe b{display:block;font-size:17px;font-weight:600;margin-bottom:2px}
+.safe span{color:var(--soft);font-size:16px;text-wrap:pretty}
+
+.closer{text-align:center;padding:104px 0;border-top:1px solid var(--line)}
+.closer h2{margin:0 auto 28px;max-width:16ch}
+footer{padding:28px 0 44px;border-top:1px solid var(--line);color:var(--soft);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes pulse{0%{transform:scale(1);opacity:.45}100%{transform:scale(1.5);opacity:0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;opacity:1!important;transform:none!important}}
+@media (max-width:63.99rem){.hero{text-align:left}}
+@media (max-width:40rem){pre{font-size:12px;padding:18px 16px}h1{font-size:50px}}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <nav>
-    <a class="logo" href="#"><img src="icon.svg" alt="">Voice Commander</a>
-    <a class="gh" href="https://github.com/harrythentrepreneur/discord-voice-commander"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>GitHub</a>
-  </nav>
-
-  <header class="hero">
-    <div>
-      <span class="eyebrow">Open source · self-hosted</span>
-      <h1>Talk to your <em>Discord.</em></h1>
-      <p class="lede">Catch up, post, reply and keep track of your server by voice — hands&#8209;free, from your phone.</p>
-      <div class="cta">
-        <a class="btn primary" href="https://github.com/harrythentrepreneur/discord-voice-commander#quick-start">Set it up</a>
-        <a class="btn ghost" href="#how">How it works</a>
-      </div>
-      <p class="note">Runs on your own computer. Uses your ChatGPT account for the voice.</p>
-    </div>
-
-    <div class="phone" aria-label="Example conversation">
-      <div class="screen">
-        <div class="bub you b1">What did I miss in #design?</div>
-        <div class="bub bot b2">Two things. Maya posted the new logo for review, and Leo asked whether the launch moves to Friday. Nobody has answered him yet.</div>
-        <div class="bub you b3">Tell Leo yes, Friday.</div>
-        <div class="bub bot b4">✓ Posted in #design.</div>
-        <div class="card b5"><b>✓ Leo replied · #design</b>Great, I'll update the plan.</div>
-        <div class="micbar"><div class="mic"><i></i></div><span class="listen">Listening…</span></div>
-      </div>
-    </div>
-  </header>
-</div>
-
-<section>
+<header class="nav">
   <div class="wrap">
-    <h2>Everything you'd do in Discord. Out loud.</h2>
-    <p class="sub">Say it the way you'd say it to a person. It finds the right channel, even if you only half remember the name.</p>
-    <div class="grid">
-      <div class="f"><div class="say">“What did I miss?”</div><h3>Catch up</h3><p>A short spoken summary of what's new, with the real messages, images and videos on screen.</p></div>
-      <div class="f"><div class="say">“Tell the team we ship Friday.”</div><h3>Post and reply</h3><p>Posts go out under your name and look like you wrote them. Reply, react, pin, start threads.</p></div>
-      <div class="f"><div class="say">“Did everything go through?”</div><h3>Track what you asked</h3><p>Every request has a live status: working, replied, done, or waiting on you.</p></div>
-      <div class="f"><div class="say">“Undo.”</div><h3>Take it back</h3><p>One word undoes the last thing it did: a post, a thread, a reaction, a rename.</p></div>
-      <div class="f"><div class="say">“Tell me when Leo replies.”</div><h3>Hear when it's done</h3><p>Get told when someone replies to you. With your phone locked, Discord pings you instead.</p></div>
-      <div class="f"><div class="say">“Um… hang on.”</div><h3>Ignores small talk</h3><p>Filler and background chatter are skipped, so the people around you won't post by accident.</p></div>
+    <a class="logo" href="#"><img src="icon.svg" alt="">Voice Commander</a>
+    <nav class="nav-links" aria-label="Sections"><a href="#say">What you can say</a><a href="#how">Set up</a><a href="#safe">Safety</a></nav>
+    <a class="btn sm" href="https://github.com/harrythentrepreneur/discord-voice-commander">GitHub</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Open source · for Discord</span>
+      <h1>Talk to your <span class="brush">Discord.</span></h1>
+      <p class="lede">Catch up, post and keep track of your server <b>by voice, hands&#8209;free, from your phone</b>. It runs on your own computer and uses your ChatGPT account for the voice.</p>
+      <a class="btn" href="https://github.com/harrythentrepreneur/discord-voice-commander#quick-start">
+        Set it up <span class="arrow">→</span></a>
+      <div class="reassure"><span>Open source</span><span>Self-hosted</span><span>No API key</span></div>
+    </div>
+
+    <div class="convo" aria-label="Example conversation">
+      <div class="convo-head"><img src="icon.svg" alt=""><b>Voice Commander</b><small>Listening</small></div>
+      <div class="stage">
+        <span class="when"><b>Today</b> 8:14 am</span>
+        <div class="b me d1">What did I miss in #design?</div>
+        <div class="b bk d2">Two things. Maya posted the new logo and wants a yes or no by Friday. Leo asked if the launch moves to Friday, and nobody has answered him.</div>
+        <div class="b me d3">Tell Leo yes, Friday.</div>
+        <div class="b bk d4">Done, posted in #design.</div>
+        <div class="card d5"><b>Leo replied · #design</b>Great, I'll update the plan.</div>
+      </div>
+      <div class="voice"><i></i>Tap to end</div>
     </div>
   </div>
 </section>
 
-<section id="how">
+<section class="sec" id="say">
   <div class="wrap">
-    <h2>Set up in about ten minutes.</h2>
-    <p class="sub">It runs on a computer you own and your phone connects to it privately. Nothing is hosted for you, and nothing is shared.</p>
+    <div class="sec-head">
+      <span class="eyebrow">What you can say</span>
+      <h2>Everything you do in Discord, <span class="brush">out loud.</span></h2>
+      <p>Say it the way you'd say it to a person. It finds the right channel, even if you only half remember the name.</p>
+    </div>
+    <div class="grid">
+      <div class="f"><span class="say">What did I miss?</span><h3>Catch up</h3><p>A short spoken summary, with the real messages, images and videos on screen.</p></div>
+      <div class="f"><span class="say">Tell the team we ship Friday.</span><h3>Post and reply</h3><p>Posts go out under your name. Reply, react, pin and start threads too.</p></div>
+      <div class="f"><span class="say">Did everything go through?</span><h3>Track your asks</h3><p>Every request has a live status: working, replied, done, or waiting on you.</p></div>
+      <div class="f"><span class="say">Undo.</span><h3>Take it back</h3><p>One word undoes the last thing it did, whether a post, a thread or a rename.</p></div>
+      <div class="f"><span class="say">Tell me when Leo replies.</span><h3>Hear when it's done</h3><p>It tells you when someone replies. With your phone locked, Discord pings you.</p></div>
+      <div class="f"><span class="say">Um… hang on.</span><h3>Skip the small talk</h3><p>Filler and background chatter are skipped, so nothing gets posted by accident.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="how">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="eyebrow">Set up</span>
+      <h2>Ready in about ten minutes.</h2>
+      <p>It runs on a computer you own, and your phone connects to it privately. Nothing is hosted for you, and nothing is shared.</p>
+    </div>
     <div class="steps">
       <div class="step"><h3>Add a Discord bot</h3><p>Create a bot in the Discord developer portal and invite it to your server.</p></div>
-      <div class="step"><h3>Run the server</h3><p>Clone the repo, add your bot token and server ID, and sign in to ChatGPT once with the Codex CLI.</p></div>
-      <div class="step"><h3>Open it on your phone</h3><p>Use Tailscale to reach your computer privately. Add the page to your home screen, then tap and talk.</p></div>
+      <div class="step"><h3>Run the server</h3><p>Add your bot token and server ID, then sign in to ChatGPT once.</p></div>
+      <div class="step"><h3>Open it on your phone</h3><p>Reach your computer privately with Tailscale. Add the page to your home screen and talk.</p></div>
     </div>
 <pre><span class="c"># needs Node 20+</span>
-REPO=harrythentrepreneur/discord-voice-commander
-npx degit $REPO dvc
+U=harrythentrepreneur
+npx degit $U/discord-voice-commander dvc
 cd dvc && npm install
 
 <span class="c"># add your bot token + server ID</span>
@@ -169,26 +205,31 @@ tailscale serve 3077</pre>
   </div>
 </section>
 
-<section>
+<section class="sec" id="safe">
   <div class="wrap">
-    <h2>Safe by default.</h2>
-    <p class="sub">It acts with your server's permissions, so the guard rails are built in.</p>
+    <div class="sec-head">
+      <span class="eyebrow">Safety</span>
+      <h2>Safe by default.</h2>
+      <p>It acts with your bot's permissions, so the guard rails are in the code, not just the prompt.</p>
+    </div>
     <div class="safe">
-      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Private, not public</b><span>Listens only on your computer. Reach it through your private Tailscale network, never the open internet.</span></p></div>
-      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>No destructive actions</b><span>It can't delete other people's messages, ban members or change permissions. The only delete is undoing its own last action.</span></p></div>
-      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Only posts when you ask</b><span>A post goes out only if you clearly asked for one. Anything else waits for a spoken yes.</span></p></div>
-      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Your keys stay home</b><span>Tokens stay on your computer and never reach the browser. It uses your own ChatGPT sign-in and needs no extra API key.</span></p></div>
-      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>No double posts</b><span>The same message to the same channel within a minute is sent once.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Private, not public</b><span>It listens only on your computer. You reach it through your private Tailscale network, never the open internet.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>No destructive actions</b><span>It can't delete other people's messages, ban members or change permissions.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Only posts when you ask</b><span>A post goes out only if you clearly asked for one. Anything else waits for a spoken&nbsp;yes.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Your keys stay home</b><span>Tokens never reach the browser. It needs no paid API key.</span></p></div>
+      <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Locked to you</b><span>An access code or your Tailscale login, with a lockout after five wrong tries.</span></p></div>
       <div><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg><p><b>Open source, MIT</b><span>Small and readable. Check every line yourself.</span></p></div>
     </div>
   </div>
 </section>
 
-<div class="wrap">
-  <footer>
-    <span>Voice Commander for Discord · MIT licence</span>
-    <span>Not affiliated with or endorsed by Discord or OpenAI.</span>
-  </footer>
-</div>
+<section class="closer">
+  <div class="wrap">
+    <h2>Put your server in your <span class="brush">pocket.</span></h2>
+    <a class="btn" href="https://github.com/harrythentrepreneur/discord-voice-commander#quick-start">Set it up <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<footer><div class="wrap"><span>Voice Commander for Discord · MIT licence</span><span>Not affiliated with or endorsed by Discord or OpenAI.</span></div></footer>
 </body>
 </html>

@@ -250,7 +250,7 @@ export function createApp({ discord = createDiscord(), brain, typedBrain, liveCa
   return { brain, mode, relay, outbox, announce, get chain() { return chain; }, get canUndo() { return !!lastDone; }, set lastDone(v) { lastDone = v; } };
   }
 
-  const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png" };
+  const types = { ".html": "text/html; charset=utf-8", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".webmanifest": "application/manifest+json", ".svg": "image/svg+xml", ".png": "image/png", ".woff2": "font/woff2", ".txt": "text/plain; charset=utf-8" };
 
   async function body(req) {
     let raw = "";
@@ -276,7 +276,7 @@ export function createApp({ discord = createDiscord(), brain, typedBrain, liveCa
 
   // Strict page security: same-origin scripts only, Discord media allowed, no framing.
   const SECURITY = {
-    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net https://*.discordapp.net; media-src 'self' blob: https://cdn.discordapp.com https://media.discordapp.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
+    "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data: https://cdn.discordapp.com https://media.discordapp.net https://*.discordapp.net; media-src 'self' blob: https://cdn.discordapp.com https://media.discordapp.net; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; form-action 'self'",
     "X-Content-Type-Options": "nosniff",
     "Referrer-Policy": "no-referrer",
     "X-Frame-Options": "DENY",
